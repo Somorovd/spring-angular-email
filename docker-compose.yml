@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "54320:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: changeinprod!
