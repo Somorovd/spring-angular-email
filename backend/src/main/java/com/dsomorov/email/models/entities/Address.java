@@ -17,9 +17,7 @@ public class Address
 {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "address_id_seq")
-  private Long id;
-  
+  private Long   id;
   private String username;
-  
   private String server;
 }

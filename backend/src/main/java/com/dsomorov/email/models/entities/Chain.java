@@ -1,11 +1,12 @@
 package com.dsomorov.email.models.entities;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 
 @Data
@@ -13,16 +14,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "users")
-public class User
+@Table(name = "chains")
+public class Chain
 {
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chain_id_seq")
   private Long id;
   
-  private String password;
-  
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "address_id")
-  private Address address;
+  @OneToMany(mappedBy = "chain", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Email> emails;
 }
