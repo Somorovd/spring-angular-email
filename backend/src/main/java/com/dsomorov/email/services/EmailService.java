@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 
 @Service
@@ -76,14 +75,15 @@ public class EmailService
   }
   
   @Transactional
-  public List<EmailDto> findSentEmailsByUserId(Long userId)
+  public List<EmailDto> findEmailBySenderIdAndIsDraft(Long userId, Boolean isDraft)
   {
-    List<Email> foundEmailSummaries = emailRepository.findEmailsBySenderId(userId);
+    List<Email> foundEmailSummaries = emailRepository.findAllBySenderIdAndIsDraft(userId, isDraft);
     
-    return StreamSupport
-      .stream(foundEmailSummaries.spliterator(), false)
+    return foundEmailSummaries
+      .stream()
       .map(emailMapper::mapTo)
-      .map(emailDto -> emailDto.asSummary())
+      .map(EmailDto::asSummary)
       .toList();
   }
 }
+

@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface EmailRepository extends CrudRepository<Email, Long>
 {
-  public List<Email> findEmailsBySenderId(Long id);
+  List<Email> findAllBySenderIdAndIsDraft(Long senderId, Boolean isDraft);
 }

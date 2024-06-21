@@ -1,5 +1,6 @@
 package com.dsomorov.email.models.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,9 +15,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmailDto
 {
   private Long id;
+  
+  private Long chainId;
+  
+  @NotNull
+  private Boolean isDraft;
   
   @Size(max = 50)
   private String subject;
@@ -30,16 +37,15 @@ public class EmailDto
   
   private UserDto sender;
   
-  private Long chainId;
-  
   public EmailDto asSummary()
   {
-    return EmailDto.builder()
-                   .id(id)
-                   .subject(subject)
-                   .senderId(senderId)
-                   .chainId(chainId)
-                   .body(body.substring(0, Math.min(body.length(), 50)))
-                   .build();
+    return EmailDto
+      .builder()
+      .id(id)
+      .chainId(chainId)
+      .subject(subject)
+      .senderId(senderId)
+      .body(body.substring(0, Math.min(body.length(), 50)))
+      .build();
   }
 }

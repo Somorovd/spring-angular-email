@@ -19,6 +19,8 @@ public class Email
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "email_id_seq")
   private Long id;
   
+  private Boolean isDraft;
+  
   private String subject;
   
   @Lob
@@ -26,10 +28,10 @@ public class Email
   private String body;
   
   @ManyToOne
-  @JoinColumn(name = "chain_id")
-  private Chain chain;
-  
-  @ManyToOne
   @JoinColumn(name = "sender_id")
   private User sender;
+  
+  @ManyToOne
+  @JoinColumn(name = "chain_id")
+  private Chain chain;
 }
