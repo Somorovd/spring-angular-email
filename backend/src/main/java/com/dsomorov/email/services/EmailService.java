@@ -8,10 +8,13 @@ import com.dsomorov.email.models.entities.User;
 import com.dsomorov.email.repositories.ChainRepository;
 import com.dsomorov.email.repositories.EmailRepository;
 import com.dsomorov.email.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 
 @Service
@@ -48,4 +51,39 @@ public class EmailService
     return emailMapper.mapTo(savedEmail);
   }
   
+  public Optional<EmailDto> findEmailById(Long id)
+  {
+    Optional<Email> foundEmail = emailRepository.findById(id);
+    return foundEmail.map(emailMapper::mapTo);
+  }
+  
+  public EmailDto updateEmail(Long id, EmailDto emailDto)
+  {
+    Email savedEmail = emailRepository
+      .findById(id)
+      .map(foundEmail -> {
+        Optional.ofNullable(emailDto.getSubject()).ifPresent(foundEmail::setSubject);
+        Optional.ofNullable(emailDto.getBody()).ifPresent(foundEmail::setBody);
+        return emailRepository.save(foundEmail);
+      })
+      .orElseThrow(() -> new RuntimeException("Email does not exist"));
+    return emailMapper.mapTo(savedEmail);
+  }
+  
+  public boolean existsById(Long id)
+  {
+    return emailRepository.existsById(id);
+  }
+  
+  @Transactional
+  public List<EmailDto> findSentEmailsByUserId(Long userId)
+  {
+    List<Email> foundEmailSummaries = emailRepository.findEmailsBySenderId(userId);
+    
+    return StreamSupport
+      .stream(foundEmailSummaries.spliterator(), false)
+      .map(emailMapper::mapTo)
+      .map(emailDto -> emailDto.asSummary())
+      .toList();
+  }
 }

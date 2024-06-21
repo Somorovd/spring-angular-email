@@ -2,6 +2,7 @@ package com.dsomorov.email.controllers;
 
 import com.dsomorov.email.models.dtos.UserDto;
 import com.dsomorov.email.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class UserController
   private UserService userService;
   
   @PostMapping()
-  public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto)
+  public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto)
   {
     UserDto savedUserDto = userService.createUser(userDto);
     return new ResponseEntity<>(savedUserDto, HttpStatus.CREATED);

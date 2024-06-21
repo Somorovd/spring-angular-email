@@ -29,4 +29,10 @@ public class UserService
     Optional<User> foundUser = userRepository.findById(id);
     return foundUser.map(userMapper::mapTo);
   }
+  
+  public boolean existsById(Long id)
+  {
+    return userRepository.existsById(id);
+  }
+  
 }

@@ -49,7 +49,7 @@ public class AddressService
         Optional.ofNullable(updateDto.getUsername()).ifPresent(foundAddress::setUsername);
         return addressRepository.save(foundAddress);
       })
-      .orElseThrow(() -> new RuntimeException("Address does not exists"));
+      .orElseThrow(() -> new RuntimeException("Address does not exist"));
     return addressMapper.mapTo(savedAddress);
   }
   
