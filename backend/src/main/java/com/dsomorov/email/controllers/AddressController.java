@@ -2,6 +2,7 @@ package com.dsomorov.email.controllers;
 
 import com.dsomorov.email.models.dtos.AddressDto;
 import com.dsomorov.email.services.AddressService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class AddressController
   private AddressService addressService;
   
   @PostMapping()
-  public ResponseEntity<AddressDto> createAddress(@RequestBody AddressDto addressDto)
+  public ResponseEntity<AddressDto> createAddress(@Valid @RequestBody AddressDto addressDto)
   {
     AddressDto savedAddressDto = addressService.createAddress(addressDto);
     return new ResponseEntity<>(savedAddressDto, HttpStatus.CREATED);
