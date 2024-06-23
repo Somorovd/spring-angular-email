@@ -2,6 +2,7 @@ package com.dsomorov.email.models.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -9,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 
 @Data
@@ -36,6 +39,9 @@ public class EmailDto
   private Long senderId;
   
   private UserDto sender;
+  
+  @Valid
+  private List<RecipientDto> recipients;
   
   public EmailDto asSummary()
   {

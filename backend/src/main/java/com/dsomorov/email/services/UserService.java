@@ -4,6 +4,7 @@ import com.dsomorov.email.mappers.UserMapper;
 import com.dsomorov.email.models.dtos.UserDto;
 import com.dsomorov.email.models.entities.User;
 import com.dsomorov.email.repositories.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class UserService
   @Autowired
   private UserMapper     userMapper;
   
-  public UserDto createUser(UserDto userDto)
+  public UserDto createUser(@Valid UserDto userDto)
   {
     User savedUser = userRepository.save(userMapper.mapFrom(userDto));
     return userMapper.mapTo(savedUser);

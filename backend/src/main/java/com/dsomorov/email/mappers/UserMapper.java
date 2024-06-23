@@ -23,8 +23,14 @@ public class UserMapper implements Mapper<User, UserDto>
     userToUserDtoTypeMap.addMapping(src -> src.getAddress().getServer(), UserDto::setServer);
     
     TypeMap<UserDto, User> userDtoToUserTypeMap = modelMapper.createTypeMap(UserDto.class, User.class);
-    userDtoToUserTypeMap.addMapping(UserDto::getUsername, (dest, v) -> dest.getAddress().setUsername((String) v));
-    userDtoToUserTypeMap.addMapping(UserDto::getServer, (dest, v) -> dest.getAddress().setServer((String) v));
+    userDtoToUserTypeMap.addMapping(
+      UserDto::getUsername,
+      (dest, v) -> dest.getAddress().setUsername((String) v)
+    );
+    userDtoToUserTypeMap.addMapping(
+      UserDto::getServer,
+      (dest, v) -> dest.getAddress().setServer((String) v)
+    );
   }
   
   @Override

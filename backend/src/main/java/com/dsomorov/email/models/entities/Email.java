@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @AllArgsConstructor
@@ -34,4 +36,7 @@ public class Email
   @ManyToOne
   @JoinColumn(name = "chain_id")
   private Chain chain;
+  
+  @OneToMany(mappedBy = "email", fetch = FetchType.EAGER)
+  private List<Recipient> recipients;
 }

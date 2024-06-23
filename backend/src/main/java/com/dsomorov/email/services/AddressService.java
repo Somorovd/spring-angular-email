@@ -4,6 +4,7 @@ import com.dsomorov.email.mappers.AddressMapper;
 import com.dsomorov.email.models.dtos.AddressDto;
 import com.dsomorov.email.models.entities.Address;
 import com.dsomorov.email.repositories.AddressRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class AddressService
   @Autowired
   private AddressMapper     addressMapper;
   
-  public AddressDto createAddress(AddressDto addressDto)
+  public AddressDto createAddress(@Valid AddressDto addressDto)
   {
     Address savedAddress = addressRepository.save(addressMapper.mapFrom(addressDto));
     return addressMapper.mapTo(savedAddress);
@@ -40,7 +41,7 @@ public class AddressService
     return foundAddress.map(addressMapper::mapTo);
   }
   
-  public AddressDto updateAddress(Long id, AddressDto updateDto)
+  public AddressDto updateAddress(Long id, @Valid AddressDto updateDto)
   {
     Address savedAddress = addressRepository
       .findById(id)
