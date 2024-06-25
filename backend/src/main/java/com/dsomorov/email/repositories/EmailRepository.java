@@ -11,4 +11,7 @@ import java.util.List;
 public interface EmailRepository extends CrudRepository<Email, Long>
 {
   List<Email> findAllBySenderIdAndIsDraft(Long senderId, Boolean isDraft);
+
+//  @Query(value = "", nativeQuery = true)
+//  Optional<Email> findLastEmailByAddressIdByChainId(Long addressId, Long chainId);
 }
