@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -30,8 +31,11 @@ public class Email
   private String body;
   
   @ManyToOne
-  @JoinColumn(name = "sender_id")
-  private User sender;
+  @JoinColumn(name = "sender_address_id")
+  private Address senderAddress;
+  
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date date;
   
   @ManyToOne
   @JoinColumn(name = "chain_id")

@@ -1,20 +1,22 @@
 package com.dsomorov.email.services;
 
+import com.dsomorov.email.mappers.AddressMapper;
 import com.dsomorov.email.mappers.EmailMapper;
 import com.dsomorov.email.mappers.RecipientMapper;
 import com.dsomorov.email.models.dtos.EmailDto;
 import com.dsomorov.email.models.dtos.RecipientDto;
-import com.dsomorov.email.models.entities.*;
+import com.dsomorov.email.models.entities.Address;
+import com.dsomorov.email.models.entities.Chain;
+import com.dsomorov.email.models.entities.Email;
+import com.dsomorov.email.models.entities.Recipient;
 import com.dsomorov.email.repositories.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.Clock;
+import java.util.*;
 
 
 @Service
@@ -24,26 +26,34 @@ public class EmailService
   @Autowired
   private EmailRepository     emailRepository;
   @Autowired
-  private UserRepository      userRepository;
-  @Autowired
-  private ChainRepository     chainRepository;
-  @Autowired
-  private RecipientRepository recipientRepository;
+  private EmailMapper         emailMapper;
   @Autowired
   private AddressRepository   addressRepository;
   @Autowired
-  private EmailMapper         emailMapper;
+  private AddressMapper       addressMapper;
+  @Autowired
+  private RecipientRepository recipientRepository;
   @Autowired
   private RecipientMapper     recipientMapper;
+  @Autowired
+  private UserRepository      userRepository;
+  @Autowired
+  private ChainRepository     chainRepository;
+  
   
   public EmailDto createEmail(@Valid EmailDto emailDto)
   {
-    Optional<User> foundSender = userRepository.findById(emailDto.getSenderId());
-    
-    if (foundSender.isEmpty())
-    {
-      throw new RuntimeException("Email does not have a valid sender");
-    }
+    Address foundSenderAddress = addressRepository.findByUsernameAndServer(
+      emailDto.getSender().getUsername(),
+      emailDto.getSender().getServer()
+    ).orElseGet(() -> {
+      Address address = Address
+        .builder()
+        .username(emailDto.getSender().getUsername())
+        .server(emailDto.getSender().getServer())
+        .build();
+      return addressRepository.save(address);
+    });
     
     if (emailDto.getChainId() == null)
     {
@@ -52,7 +62,8 @@ public class EmailService
     }
     
     Email email = emailMapper.mapFrom(emailDto);
-    email.setSender(foundSender.get());
+    email.setSenderAddress(foundSenderAddress);
+    email.setDate(Date.from(Clock.systemUTC().instant()));
     Email savedEmail = emailRepository.save(email);
     
     List<Recipient> savedRecipient = this._saveEmailRecipients(emailDto.getRecipients(), savedEmail);
@@ -75,6 +86,7 @@ public class EmailService
       .map(foundEmail -> {
         Optional.ofNullable(emailDto.getSubject()).ifPresent(foundEmail::setSubject);
         Optional.ofNullable(emailDto.getBody()).ifPresent(foundEmail::setBody);
+        foundEmail.setDate(Date.from(Clock.systemUTC().instant()));
         return emailRepository.save(foundEmail);
       })
       .orElseThrow(() -> new RuntimeException("Email does not exist"));
@@ -92,12 +104,23 @@ public class EmailService
     return emailRepository.existsById(id);
   }
   
+  
   @Transactional
-  public List<EmailDto> findEmailBySenderIdAndIsDraft(Long userId, Boolean isDraft)
+  public List<EmailDto> findDraftEmailsByUserId(Long userId)
   {
-    List<Email> foundEmailSummaries = emailRepository.findAllBySenderIdAndIsDraft(userId, isDraft);
-    
-    return foundEmailSummaries
+    return emailRepository
+      .findDraftEmailsByUserId(userId)
+      .stream()
+      .map(emailMapper::mapTo)
+      .map(EmailDto::asSummary)
+      .toList();
+  }
+  
+  @Transactional
+  public List<EmailDto> findSentEmailsByUserId(Long userId)
+  {
+    return emailRepository
+      .findSentEmailsByUserId(userId)
       .stream()
       .map(emailMapper::mapTo)
       .map(EmailDto::asSummary)

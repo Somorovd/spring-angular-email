@@ -49,12 +49,12 @@ public class EmailController
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
-    List<EmailDto> foundEmailDtos = emailService.findEmailBySenderIdAndIsDraft(userId, false);
+    List<EmailDto> foundEmailDtos = emailService.findSentEmailsByUserId(userId);
     return new ResponseEntity<>(foundEmailDtos, HttpStatus.OK);
   }
   
   @GetMapping("/user/{userId}/drafts")
-  public ResponseEntity<List<EmailDto>> findDraftEmailsByUserId
+  public ResponseEntity<List<EmailDto>> findUserDraftEmails
     (
       @PathVariable("userId") Long userId
     )
@@ -64,7 +64,7 @@ public class EmailController
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
-    List<EmailDto> foundEmailDtos = emailService.findEmailBySenderIdAndIsDraft(userId, true);
+    List<EmailDto> foundEmailDtos = emailService.findDraftEmailsByUserId(userId);
     return new ResponseEntity<>(foundEmailDtos, HttpStatus.OK);
   }
   
