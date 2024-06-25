@@ -11,8 +11,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -78,7 +80,7 @@ public class EmailService
       .orElseThrow(() -> new RuntimeException("Email does not exist"));
     
     List<Recipient> savedRecipients = this._saveEmailRecipients(emailDto.getRecipients(), savedEmail);
-    // TODO: Handle deleting removed recipients
+    this._deleteMissingRecipients(savedRecipients, savedEmail);
     // TODO: Handle email not a draft and create necessary statuses.
     
     savedEmail.setRecipients(savedRecipients);
@@ -128,13 +130,32 @@ public class EmailService
                  return addressRepository.save(address);
                });
                
-               Recipient recipient = recipientMapper.mapFrom(recipientDto);
-               recipient.setAddress(foundAddress);
-               recipient.setEmail(email);
-               return recipientRepository.save(recipient);
+               return recipientRepository
+                 .findByEmailAndAddress(email, foundAddress)
+                 .orElseGet(() -> {
+                   Recipient recipient = recipientMapper.mapFrom(recipientDto);
+                   recipient.setAddress(foundAddress);
+                   recipient.setEmail(email);
+                   return recipientRepository.save(recipient);
+                 });
              }
            })
       .toList();
+  }
+  
+  private void _deleteMissingRecipients(List<Recipient> savedRecipients, Email email)
+  {
+    Set<Long> foundRecipientIds = new HashSet<>(
+      recipientRepository
+        .findByEmailId(email.getId())
+        .stream()
+        .map(Recipient::getId)
+        .toList()
+    );
+    
+    savedRecipients.forEach(recipientDto -> foundRecipientIds.remove(recipientDto.getId()));
+    
+    recipientRepository.deleteAllById(foundRecipientIds.stream().toList());
   }
 }
 
