@@ -68,6 +68,22 @@ public class EmailController
     return new ResponseEntity<>(foundEmailDtos, HttpStatus.OK);
   }
   
+  @GetMapping("/user/{userId}/received")
+  public ResponseEntity<List<EmailDto>> findReceivedEmails
+    (
+      @PathVariable("userId") Long userId
+    )
+  {
+    if (!userService.existsById(userId))
+    {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    
+    List<EmailDto> foundEmailDtos = emailService.findEmailsReceivedByUserId(userId);
+    return new ResponseEntity<>(foundEmailDtos, HttpStatus.OK);
+  }
+  
+  
   @PutMapping("/{id}")
   public ResponseEntity<EmailDto> updateEmail
     (

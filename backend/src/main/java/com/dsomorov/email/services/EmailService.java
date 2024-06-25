@@ -127,6 +127,17 @@ public class EmailService
       .toList();
   }
   
+  @Transactional
+  public List<EmailDto> findEmailsReceivedByUserId(Long userId)
+  {
+    return emailRepository
+      .findLatestEmailsInChainsByUserId(userId)
+      .stream()
+      .map(emailMapper::mapTo)
+      .map(EmailDto::asSummary)
+      .toList();
+  }
+  
   private List<Recipient> _saveEmailRecipients(List<RecipientDto> recipientDtos, Email email)
   {
     return recipientDtos
