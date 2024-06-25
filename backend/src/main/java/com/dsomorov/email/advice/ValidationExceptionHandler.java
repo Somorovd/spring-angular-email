@@ -15,14 +15,15 @@ public class ValidationExceptionHandler
 {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public Map<String, String> handleInvaleArgument(MethodArgumentNotValidException ex)
+  public Map<String, String> handleInvalidArgument(MethodArgumentNotValidException ex)
   {
     Map<String, String> errorMap = new HashMap<>();
     ex.getBindingResult()
       .getFieldErrors()
-      .forEach(error -> {
-        errorMap.put(error.getField(), error.getDefaultMessage());
-      });
+      .forEach(error -> errorMap.put(error.getField(), error.getDefaultMessage()));
+    ex.getBindingResult()
+      .getGlobalErrors()
+      .forEach(error -> errorMap.put(error.getObjectName(), error.getDefaultMessage()));
     return errorMap;
   }
 }
