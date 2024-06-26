@@ -251,6 +251,15 @@ public class EmailService
         statusRepository.save(foundStatus);
       });
     
+    statusRepository
+      .findByAddressAndChainAndLocation(
+        email.getSenderAddress(),
+        email.getChain(),
+        Location.INBOX
+      ).ifPresent(status -> {
+        status.setEmail(email);
+        status.setRead(true);
+      });
   }
 }
 
