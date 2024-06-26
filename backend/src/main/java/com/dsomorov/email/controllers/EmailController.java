@@ -2,6 +2,7 @@ package com.dsomorov.email.controllers;
 
 import com.dsomorov.email.models.dtos.EmailDto;
 import com.dsomorov.email.models.dtos.StatusDto;
+import com.dsomorov.email.models.dtos.UpdateEmailDto;
 import com.dsomorov.email.services.EmailService;
 import com.dsomorov.email.services.UserService;
 import com.dsomorov.email.validation.RuntimeValidationException;
@@ -90,7 +91,7 @@ public class EmailController
   public ResponseEntity<EmailDto> updateEmail
     (
       @PathVariable("id") Long id,
-      @Valid @RequestBody EmailDto emailDto
+      @Valid @RequestBody UpdateEmailDto updateEmailDto
     )
   {
     Optional<EmailDto> foundEmail = emailService.findEmailById(id);
@@ -103,7 +104,7 @@ public class EmailController
       throw new RuntimeValidationException("Cannot update email that has already been sent");
     }
     
-    EmailDto updatedEmailDto = emailService.updateEmail(id, emailDto);
-    return new ResponseEntity<>(updatedEmailDto, HttpStatus.ACCEPTED);
+    EmailDto savedEmailDto = emailService.updateEmail(id, updateEmailDto);
+    return new ResponseEntity<>(savedEmailDto, HttpStatus.ACCEPTED);
   }
 }

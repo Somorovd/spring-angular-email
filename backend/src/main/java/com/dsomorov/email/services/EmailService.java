@@ -8,6 +8,7 @@ import com.dsomorov.email.mappers.StatusMapper;
 import com.dsomorov.email.models.dtos.EmailDto;
 import com.dsomorov.email.models.dtos.RecipientDto;
 import com.dsomorov.email.models.dtos.StatusDto;
+import com.dsomorov.email.models.dtos.UpdateEmailDto;
 import com.dsomorov.email.models.entities.*;
 import com.dsomorov.email.repositories.*;
 import com.dsomorov.email.validation.RuntimeValidationException;
@@ -62,7 +63,11 @@ public class EmailService
     
     if (emailDto.getChainId() == null)
     {
-      Chain chain = chainRepository.save(new Chain());
+      Chain chain = chainRepository.save(
+        Chain.builder()
+             .subject(emailDto.getSubject())
+             .build()
+      );
       emailDto.setChainId(chain.getId());
     }
     else if (!chainRepository.existsById(emailDto.getChainId()))
@@ -93,36 +98,50 @@ public class EmailService
   }
   
   @Transactional
-  public EmailDto updateEmail(Long id, @Valid EmailDto emailDto)
+  public EmailDto updateEmail(Long id, UpdateEmailDto updateEmailDto)
   {
     Email savedEmail = emailRepository
       .findById(id)
       .map(foundEmail -> {
-        Optional.ofNullable(emailDto.getSubject()).ifPresent(foundEmail::setSubject);
-        Optional.ofNullable(emailDto.getBody()).ifPresent(foundEmail::setBody);
-        Optional.ofNullable(emailDto.getIsDraft()).ifPresent(foundEmail::setIsDraft);
+        Optional.ofNullable(updateEmailDto.getBody()).ifPresent(foundEmail::setBody);
+        Optional.ofNullable(updateEmailDto.getIsDraft()).ifPresent(foundEmail::setIsDraft);
         foundEmail.setDate(Date.from(Clock.systemUTC().instant()));
         return emailRepository.save(foundEmail);
       })
       .orElseThrow(() -> new RuntimeException("Email does not exist"));
     
-    List<Recipient> savedRecipients = this._saveEmailRecipients(emailDto.getRecipients(), savedEmail);
-    this._deleteMissingRecipients(savedRecipients, savedEmail);
+    if (updateEmailDto.getAddedRecipients() != null)
+    {
+      this._saveEmailRecipients(
+        updateEmailDto.getAddedRecipients(),
+        savedEmail
+      );
+    }
+    if (updateEmailDto.getRemovedRecipients() != null)
+    {
+      this._deleteRemovedRecipients(
+        updateEmailDto.getRemovedRecipients(),
+        savedEmail
+      );
+    }
+    
+    List<Recipient> foundRecipients = recipientRepository.findAllByEmail(savedEmail);
     
     if (!savedEmail.getIsDraft())
     {
-      this._createStatuses(savedRecipients, savedEmail);
+      if (foundRecipients.isEmpty())
+      {
+        throw new RuntimeValidationException("Cannot send email with all recipients removed");
+      }
+      else
+      {
+        this._createStatuses(foundRecipients, savedEmail);
+      }
     }
     
-    savedEmail.setRecipients(savedRecipients);
+    savedEmail.setRecipients(foundRecipients);
     return emailMapper.mapTo(savedEmail);
   }
-  
-  public boolean existsById(Long id)
-  {
-    return emailRepository.existsById(id);
-  }
-  
   
   @Transactional
   public List<EmailDto> findDraftEmailsByUserId(Long userId)
@@ -160,54 +179,49 @@ public class EmailService
   {
     return recipientDtos
       .stream()
-      .map(recipientDto ->
-           {
-             if (recipientDto.getId() != null)
-             {
-               return recipientRepository
-                 .findById(recipientDto.getId())
-                 .orElseThrow(() -> new RuntimeException("Invalid Recipient Id: " + recipientDto.getId().toString()));
-             }
-             else
-             {
-               Address foundAddress = addressRepository.findByUsernameAndServer(
-                 recipientDto.getUsername(),
-                 recipientDto.getServer()
-               ).orElseGet(() -> {
-                 Address address = Address
-                   .builder()
-                   .username(recipientDto.getUsername())
-                   .server(recipientDto.getServer())
-                   .build();
-                 return addressRepository.save(address);
-               });
-               
-               return recipientRepository
-                 .findByEmailAndAddress(email, foundAddress)
-                 .orElseGet(() -> {
-                   Recipient recipient = recipientMapper.mapFrom(recipientDto);
-                   recipient.setAddress(foundAddress);
-                   recipient.setEmail(email);
-                   return recipientRepository.save(recipient);
-                 });
-             }
-           })
+      .map(recipientDto -> {
+        Address foundAddress = addressRepository.findByUsernameAndServer(
+          recipientDto.getUsername(),
+          recipientDto.getServer()
+        ).orElseGet(() -> {
+          Address address = Address
+            .builder()
+            .username(recipientDto.getUsername())
+            .server(recipientDto.getServer())
+            .build();
+          return addressRepository.save(address);
+        });
+        
+        return recipientRepository
+          .findByEmailAndAddress(email, foundAddress)
+          .orElseGet(() -> {
+            Recipient recipient = recipientMapper.mapFrom(recipientDto);
+            recipient.setAddress(foundAddress);
+            recipient.setEmail(email);
+            return recipientRepository.save(recipient);
+          });
+      })
       .toList();
   }
   
-  private void _deleteMissingRecipients(List<Recipient> savedRecipients, Email email)
+  private void _deleteRemovedRecipients(List<RecipientDto> removedRecipients, Email email)
   {
-    Set<Long> foundRecipientIds = new HashSet<>(
+    ArrayList<Long> idsToRemove = new ArrayList<>();
+    
+    removedRecipients.forEach(recipientDto -> {
+      Optional<Address> foundAddress = addressRepository.findByUsernameAndServer(
+        recipientDto.getUsername(),
+        recipientDto.getServer()
+      );
+      
+      if (foundAddress.isEmpty()) {return;}
+      
       recipientRepository
-        .findByEmailId(email.getId())
-        .stream()
-        .map(Recipient::getId)
-        .toList()
-    );
+        .findByEmailAndAddress(email, foundAddress.get())
+        .ifPresent(recipient -> idsToRemove.add(recipient.getId()));
+    });
     
-    savedRecipients.forEach(recipientDto -> foundRecipientIds.remove(recipientDto.getId()));
-    
-    recipientRepository.deleteAllById(foundRecipientIds.stream().toList());
+    recipientRepository.deleteAllById(idsToRemove);
   }
   
   private void _createStatuses(List<Recipient> savedRecipients, Email email)

@@ -1,13 +1,15 @@
 package com.dsomorov.email.models.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 
 @Data
@@ -15,14 +17,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RecipientDto
+public class UpdateEmailDto
 {
-  @NotNull
-  @Size(min = 1, max = 64, message = "Username must be between 1 and 64 characters")
-  private String username;
+  private Long id;
   
   @NotNull
-  @Size(min = 1, max = 254, message = "Server must be between 1 and 254 characters")
-  @Pattern(regexp = ".*\\..*", message = "Server not valid format <A>.<B>")
-  private String server;
+  private Boolean isDraft;
+  
+  @Size(max = 50)
+  private String subject;
+  
+  private String body;
+  
+  @Valid
+  private List<RecipientDto> addedRecipients;
+  
+  @Valid
+  private List<RecipientDto> removedRecipients;
 }

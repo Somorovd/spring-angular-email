@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface RecipientRepository extends CrudRepository<Recipient, Long>
 {
-  List<Recipient> findByEmailId(Long id);
+  List<Recipient> findAllByEmail(Email email);
   
   Optional<Recipient> findByEmailAndAddress(Email email, Address address);
 }

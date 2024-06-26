@@ -21,6 +21,8 @@ public class Chain
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chain_id_seq")
   private Long id;
   
+  private String subject;
+  
   @OneToMany(mappedBy = "chain", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Email> emails;
 }

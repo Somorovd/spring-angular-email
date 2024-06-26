@@ -23,8 +23,8 @@ public class Email
   private Long id;
   
   private Boolean isDraft;
-  
-  private String subject;
+
+//  private String subject;
   
   @Lob
   @Column(columnDefinition = "TEXT")

@@ -1,6 +1,7 @@
 package com.dsomorov.email.models.dtos;
 
 import com.dsomorov.email.validation.ValidateEmailRecipients;
+import com.dsomorov.email.validation.ValidateEmailReply;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +21,7 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ValidateEmailRecipients
+@ValidateEmailReply
 public class EmailDto
 {
   private Long id;
