@@ -1,5 +1,6 @@
 package com.dsomorov.email.models.entities;
 
+import com.dsomorov.email.enums.Location;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,14 +21,21 @@ public class Status
   private Long id;
   
   @ManyToOne
-  @JoinColumn(name = "user_id")
-  private User user;
+  @JoinColumn(name = "address_id")
+  private Address address;
   
   @ManyToOne
   @JoinColumn(name = "chain_id")
   private Chain chain;
   
+  @ManyToOne
+  @JoinColumn(name = "email_id")
+  private Email email;
+  
   private boolean isRead;
   
   private boolean isStarred;
+  
+  @Enumerated(EnumType.STRING)
+  private Location location;
 }

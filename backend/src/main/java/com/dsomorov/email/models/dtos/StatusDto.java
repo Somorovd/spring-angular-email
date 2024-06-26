@@ -1,5 +1,6 @@
 package com.dsomorov.email.models.dtos;
 
+import com.dsomorov.email.enums.Location;
 import com.dsomorov.email.validation.ValidateEmailRecipients;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -20,11 +21,13 @@ public class StatusDto
   
   private Long chainId;
   
-  private Long userId;
+  private Long addressId;
   
   private boolean isRead;
   
   private boolean isStarred;
+  
+  private Location location;
   
   private EmailDto email;
 }

@@ -1,6 +1,7 @@
 package com.dsomorov.email.controllers;
 
 import com.dsomorov.email.models.dtos.EmailDto;
+import com.dsomorov.email.models.dtos.StatusDto;
 import com.dsomorov.email.services.EmailService;
 import com.dsomorov.email.services.UserService;
 import jakarta.validation.Valid;
@@ -68,8 +69,8 @@ public class EmailController
     return new ResponseEntity<>(foundEmailDtos, HttpStatus.OK);
   }
   
-  @GetMapping("/user/{userId}/received")
-  public ResponseEntity<List<EmailDto>> findReceivedEmails
+  @GetMapping("/user/{userId}/inbox")
+  public ResponseEntity<List<StatusDto>> findUserInbox
     (
       @PathVariable("userId") Long userId
     )
@@ -79,8 +80,8 @@ public class EmailController
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
-    List<EmailDto> foundEmailDtos = emailService.findEmailsReceivedByUserId(userId);
-    return new ResponseEntity<>(foundEmailDtos, HttpStatus.OK);
+    List<StatusDto> foundStatusDtos = emailService.findUserInbox(userId);
+    return new ResponseEntity<>(foundStatusDtos, HttpStatus.OK);
   }
   
   

@@ -42,6 +42,9 @@ public class EmailDto
   
   @Valid
   private List<RecipientDto> recipients;
+
+//  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+//  private StatusDto status;
   
   public EmailDto asSummary()
   {

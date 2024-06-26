@@ -1,14 +1,14 @@
 package com.dsomorov.email.services;
 
+import com.dsomorov.email.enums.Location;
 import com.dsomorov.email.mappers.AddressMapper;
 import com.dsomorov.email.mappers.EmailMapper;
 import com.dsomorov.email.mappers.RecipientMapper;
+import com.dsomorov.email.mappers.StatusMapper;
 import com.dsomorov.email.models.dtos.EmailDto;
 import com.dsomorov.email.models.dtos.RecipientDto;
-import com.dsomorov.email.models.entities.Address;
-import com.dsomorov.email.models.entities.Chain;
-import com.dsomorov.email.models.entities.Email;
-import com.dsomorov.email.models.entities.Recipient;
+import com.dsomorov.email.models.dtos.StatusDto;
+import com.dsomorov.email.models.entities.*;
 import com.dsomorov.email.repositories.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -39,8 +39,12 @@ public class EmailService
   private UserRepository      userRepository;
   @Autowired
   private ChainRepository     chainRepository;
+  @Autowired
+  private StatusRepository    statusRepository;
+  @Autowired
+  private StatusMapper        statusMapper;
   
-  
+  @Transactional
   public EmailDto createEmail(@Valid EmailDto emailDto)
   {
     Address foundSenderAddress = addressRepository.findByUsernameAndServer(
@@ -66,10 +70,14 @@ public class EmailService
     email.setDate(Date.from(Clock.systemUTC().instant()));
     Email savedEmail = emailRepository.save(email);
     
-    List<Recipient> savedRecipient = this._saveEmailRecipients(emailDto.getRecipients(), savedEmail);
-    // TODO: Handle email not a draft and create necessary statuses.
+    List<Recipient> savedRecipients = this._saveEmailRecipients(emailDto.getRecipients(), savedEmail);
     
-    savedEmail.setRecipients(savedRecipient);
+    if (!savedEmail.getIsDraft())
+    {
+      this._createStatuses(savedRecipients, savedEmail);
+    }
+    
+    savedEmail.setRecipients(savedRecipients);
     return emailMapper.mapTo(savedEmail);
   }
   
@@ -79,6 +87,7 @@ public class EmailService
     return foundEmail.map(emailMapper::mapTo);
   }
   
+  @Transactional
   public EmailDto updateEmail(Long id, @Valid EmailDto emailDto)
   {
     Email savedEmail = emailRepository
@@ -86,6 +95,7 @@ public class EmailService
       .map(foundEmail -> {
         Optional.ofNullable(emailDto.getSubject()).ifPresent(foundEmail::setSubject);
         Optional.ofNullable(emailDto.getBody()).ifPresent(foundEmail::setBody);
+        Optional.ofNullable(emailDto.getIsDraft()).ifPresent(foundEmail::setIsDraft);
         foundEmail.setDate(Date.from(Clock.systemUTC().instant()));
         return emailRepository.save(foundEmail);
       })
@@ -93,7 +103,11 @@ public class EmailService
     
     List<Recipient> savedRecipients = this._saveEmailRecipients(emailDto.getRecipients(), savedEmail);
     this._deleteMissingRecipients(savedRecipients, savedEmail);
-    // TODO: Handle email not a draft and create necessary statuses.
+    
+    if (!savedEmail.getIsDraft())
+    {
+      this._createStatuses(savedRecipients, savedEmail);
+    }
     
     savedEmail.setRecipients(savedRecipients);
     return emailMapper.mapTo(savedEmail);
@@ -128,13 +142,12 @@ public class EmailService
   }
   
   @Transactional
-  public List<EmailDto> findEmailsReceivedByUserId(Long userId)
+  public List<StatusDto> findUserInbox(Long userId)
   {
-    return emailRepository
-      .findLatestEmailsInChainsByUserId(userId)
+    return statusRepository
+      .findUserInbox(userId)
       .stream()
-      .map(emailMapper::mapTo)
-      .map(EmailDto::asSummary)
+      .map(statusMapper::mapTo)
       .toList();
   }
   
@@ -190,6 +203,35 @@ public class EmailService
     savedRecipients.forEach(recipientDto -> foundRecipientIds.remove(recipientDto.getId()));
     
     recipientRepository.deleteAllById(foundRecipientIds.stream().toList());
+  }
+  
+  private void _createStatuses(List<Recipient> savedRecipients, Email email)
+  {
+    savedRecipients
+      .forEach(recipient -> {
+        if (!Objects.equals(recipient.getAddress().getServer(), "dsomorov.xyz"))
+        {
+          return;
+        }
+        Status foundStatus = statusRepository
+          .findByAddressAndChainAndLocation(
+            recipient.getAddress(),
+            email.getChain(),
+            Location.INBOX
+          )
+          .orElseGet(() -> Status
+            .builder()
+            .address(recipient.getAddress())
+            .chain(email.getChain())
+            .isStarred(false)
+            .location(Location.INBOX)
+            .build()
+          );
+        foundStatus.setRead(false);
+        foundStatus.setEmail(email);
+        statusRepository.save(foundStatus);
+      });
+    
   }
 }
 
