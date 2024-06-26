@@ -1,5 +1,6 @@
 package com.dsomorov.email.advice;
 
+import com.dsomorov.email.validation.RuntimeValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +25,15 @@ public class ValidationExceptionHandler
     ex.getBindingResult()
       .getGlobalErrors()
       .forEach(error -> errorMap.put(error.getObjectName(), error.getDefaultMessage()));
+    return errorMap;
+  }
+  
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(RuntimeValidationException.class)
+  public Map<String, String> handleRuntimeValidationException(RuntimeValidationException ex)
+  {
+    Map<String, String> errorMap = new HashMap<>();
+    errorMap.put("error", ex.getMessage());
     return errorMap;
   }
 }

@@ -4,6 +4,7 @@ import com.dsomorov.email.models.dtos.EmailDto;
 import com.dsomorov.email.models.dtos.StatusDto;
 import com.dsomorov.email.services.EmailService;
 import com.dsomorov.email.services.UserService;
+import com.dsomorov.email.validation.RuntimeValidationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -92,9 +93,14 @@ public class EmailController
       @Valid @RequestBody EmailDto emailDto
     )
   {
-    if (!emailService.existsById(id))
+    Optional<EmailDto> foundEmail = emailService.findEmailById(id);
+    if (foundEmail.isEmpty())
     {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    else if (!foundEmail.get().getIsDraft())
+    {
+      throw new RuntimeValidationException("Cannot update email that has already been sent");
     }
     
     EmailDto updatedEmailDto = emailService.updateEmail(id, emailDto);

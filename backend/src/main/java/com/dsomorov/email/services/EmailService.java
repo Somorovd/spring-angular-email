@@ -10,6 +10,7 @@ import com.dsomorov.email.models.dtos.RecipientDto;
 import com.dsomorov.email.models.dtos.StatusDto;
 import com.dsomorov.email.models.entities.*;
 import com.dsomorov.email.repositories.*;
+import com.dsomorov.email.validation.RuntimeValidationException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,10 @@ public class EmailService
     {
       Chain chain = chainRepository.save(new Chain());
       emailDto.setChainId(chain.getId());
+    }
+    else if (!chainRepository.existsById(emailDto.getChainId()))
+    {
+      throw new RuntimeValidationException("Chain Id does not exist");
     }
     
     Email email = emailMapper.mapFrom(emailDto);
