@@ -6,7 +6,6 @@ import { ApiService } from '../../services/api.service';
   standalone: true,
   imports: [],
   templateUrl: './hello.component.html',
-  styleUrl: './hello.component.css',
 })
 export class HelloComponent implements OnInit {
   message: string = '';
