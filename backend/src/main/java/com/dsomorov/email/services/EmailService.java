@@ -98,6 +98,16 @@ public class EmailService
   }
   
   @Transactional
+  public List<EmailDto> findEmailChainByUserId(Long userId, Long chainId)
+  {
+    return emailRepository
+      .findEmailChainByUserId(userId, chainId)
+      .stream()
+      .map(emailMapper::mapTo)
+      .toList();
+  }
+  
+  @Transactional
   public EmailDto updateEmail(Long id, UpdateEmailDto updateEmailDto)
   {
     Email savedEmail = emailRepository

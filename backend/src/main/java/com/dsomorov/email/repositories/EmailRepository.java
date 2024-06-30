@@ -40,4 +40,17 @@ public interface EmailRepository extends CrudRepository<Email, Long>
     nativeQuery = true
   )
   List<Email> findLatestEmailsInChainsByUserId(Long userId);
+  
+  @Query(
+    value =
+      "" +
+        "select distinct e.* from emails e " +
+        "join recipients r on r.email_id = e.id " +
+        "join users u_send on u_send.address_id = e.sender_address_id " +
+        "join users u_rec on u_rec.address_id = r.address_id " +
+        "where e.chain_id = ?2 and (u_send.id = ?1 or (u_rec.id = ?1 and e.is_draft = false)) " +
+        "order by e.\"date\" ",
+    nativeQuery = true
+  )
+  List<Email> findEmailChainByUserId(Long userId, Long chainId);
 }

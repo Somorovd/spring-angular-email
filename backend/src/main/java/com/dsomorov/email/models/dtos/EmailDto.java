@@ -50,14 +50,7 @@ public class EmailDto
   
   public EmailDto asSummary()
   {
-    return EmailDto
-      .builder()
-      .id(id)
-      .chainId(chainId)
-      .sender(sender)
-      .subject(subject)
-      .body(body.substring(0, Math.min(body.length(), 50)))
-      .date(date)
-      .build();
+    this.body = this.body.substring(0, 50);
+    return this;
   }
 }

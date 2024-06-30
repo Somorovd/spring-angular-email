@@ -3,6 +3,7 @@ package com.dsomorov.email.controllers;
 import com.dsomorov.email.models.dtos.EmailDto;
 import com.dsomorov.email.models.dtos.StatusDto;
 import com.dsomorov.email.models.dtos.UpdateEmailDto;
+import com.dsomorov.email.services.ChainService;
 import com.dsomorov.email.services.EmailService;
 import com.dsomorov.email.services.UserService;
 import com.dsomorov.email.validation.RuntimeValidationException;
@@ -24,6 +25,8 @@ public class EmailController
   private EmailService emailService;
   @Autowired
   private UserService  userService;
+  @Autowired
+  private ChainService chainService;
   
   @PostMapping()
   public ResponseEntity<EmailDto> createEmail(@Valid @RequestBody EmailDto emailDto)
@@ -39,6 +42,26 @@ public class EmailController
     return foundEmail
       .map(emailDto -> new ResponseEntity<>(emailDto, HttpStatus.OK))
       .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+  }
+  
+  @GetMapping("/user/{userId}/chain/{chainId}")
+  public ResponseEntity<List<EmailDto>> findEmailChainByUserId
+    (
+      @PathVariable("userId") Long userId,
+      @PathVariable("chainId") Long chainId
+    )
+  {
+    if (!userService.existsById(userId))
+    {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    if (!chainService.existsById(chainId))
+    {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    
+    List<EmailDto> foundEmailDtos = emailService.findEmailChainByUserId(userId, chainId);
+    return new ResponseEntity<>(foundEmailDtos, HttpStatus.OK);
   }
   
   @GetMapping("/user/{userId}/sent")

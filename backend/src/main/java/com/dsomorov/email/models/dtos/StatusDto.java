@@ -19,8 +19,6 @@ public class StatusDto
   
   private Long chainId;
   
-  private Long addressId;
-  
   private Boolean isRead;
   
   private Boolean isStarred;
