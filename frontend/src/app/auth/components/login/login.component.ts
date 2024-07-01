@@ -1,9 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ErrorMap } from '../../../shared/types/errorMap.type';
+
+import { Store } from '@ngrx/store';
+
+import { combineLatest } from 'rxjs';
+
 import { invalidDomainValidator } from '../../services/invalidDomainValidator';
+import { AuthActions } from '../../store/actions';
+import { selectErrors, selectIsSubmitting } from '../../store/reducers';
+import { LoginRequestInterface } from '../../types/loginRequest.interface';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +18,12 @@ import { invalidDomainValidator } from '../../services/invalidDomainValidator';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+  data$ = combineLatest({
+    isSubmitting: this.store.select(selectIsSubmitting),
+    backendErrors: this.store.select(selectErrors),
+  });
+
   formErrors: string[] = [];
 
   form = this.fb.nonNullable.group({
@@ -26,12 +38,29 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private store: Store, private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.store.select(selectErrors).subscribe((errors) => {
+      if (!errors) return;
+      if (errors['message']) {
+        this.formErrors = [...this.formErrors, errors['message']];
+      } else {
+        this.formErrors = [...this.formErrors, ...Object.values(errors)];
+      }
+    });
+  }
 
   onSubmit() {
+    this.formErrors = [];
     if (!this.form.valid) {
       this.formErrors = this.getFormValidationErrors();
-      return;
+    } else {
+      const request: LoginRequestInterface = {
+        ...this.form.getRawValue(),
+        server: 'dsomorov.xyz',
+      };
+      this.store.dispatch(AuthActions.login({ request }));
     }
   }
 

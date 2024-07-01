@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseUrl: 'https://spring-email.onrender.com/',
+  apiUrl: 'https://spring-email.onrender.com/api',
 };

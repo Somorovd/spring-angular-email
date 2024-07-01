@@ -11,17 +11,14 @@ export class ApiService {
   constructor(private http: HttpClient) {}
 
   getHello(): Observable<any> {
-    return this.http.get(`${environment.baseUrl}/api/hello`);
+    return this.http.get(`${environment.apiUrl}/hello`);
   }
 
   getAllAddresses(): Observable<Address[]> {
-    return this.http.get<Address[]>(`${environment.baseUrl}/api/addresses`);
+    return this.http.get<Address[]>(`${environment.apiUrl}/addresses`);
   }
 
   createAddress(address: Address): Observable<Address> {
-    return this.http.post<Address>(
-      `${environment.baseUrl}/api/addresses`,
-      address
-    );
+    return this.http.post<Address>(`${environment.apiUrl}/addresses`, address);
   }
 }

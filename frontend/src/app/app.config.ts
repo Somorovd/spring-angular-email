@@ -1,25 +1,30 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
-import { provideStore } from '@ngrx/store';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
-
-import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
-import { environment } from '../environments/environment';
-import { addressesReducer } from './store/addresses.reducer';
+
+import { provideState, provideStore } from '@ngrx/store';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEffects } from '@ngrx/effects';
-import { AddressesEffects } from './store/addresses.effects';
+import { provideRouterStore, routerReducer } from '@ngrx/router-store';
+
+import { environment } from '../environments/environment';
+
+import { appRoutes } from './app.routes';
+
+import { AuthEffects } from './auth/store/effects';
+import { authFeatureKey, authReducer } from './auth/store/reducers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideRouter(appRoutes),
     provideHttpClient(),
     provideStore({
-      addresses: addressesReducer,
+      router: routerReducer,
     }),
-    provideEffects([AddressesEffects]),
+    provideRouterStore(),
+    provideState(authFeatureKey, authReducer),
+    provideEffects([AuthEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: environment.production,
