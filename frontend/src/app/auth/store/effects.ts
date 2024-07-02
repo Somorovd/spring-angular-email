@@ -7,6 +7,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
+import { PersistanceService } from '../../shared/services/persistance.service';
 import { UserInterface } from '../../shared/types/user.interface';
 
 import { AuthActions } from './actions';
@@ -16,8 +17,26 @@ export class AuthEffects {
   constructor(
     private actions$: Actions,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private persistanceService: PersistanceService
   ) {}
+
+  getCurrentUser$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.getCurrentUser),
+      switchMap(() => {
+        if (!this.persistanceService.get('userId')) {
+          return of(AuthActions.getCurrentUserFailed());
+        }
+        return this.authService.getCurrentUser().pipe(
+          map((currentUser: UserInterface) => {
+            return AuthActions.getCurrentUserSuccess({ currentUser });
+          }),
+          catchError(() => of(AuthActions.getCurrentUserFailed()))
+        );
+      })
+    );
+  });
 
   login$ = createEffect(() => {
     return this.actions$.pipe(
@@ -25,6 +44,7 @@ export class AuthEffects {
       switchMap(({ request }) => {
         return this.authService.login(request).pipe(
           map((currentUser: UserInterface) => {
+            this.persistanceService.set('userId', currentUser.id);
             return AuthActions.loginSuccess({ currentUser });
           }),
           catchError((errorResponse: HttpErrorResponse) => {

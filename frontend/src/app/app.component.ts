@@ -1,5 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+
+import { Store } from '@ngrx/store';
+
+import { AuthService } from './auth/services/auth.service';
+import { AuthActions } from './auth/store/actions';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +12,10 @@ import { RouterOutlet } from '@angular/router';
   standalone: true,
   imports: [RouterOutlet],
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  constructor(private store: Store, private authService: AuthService) {}
+
+  ngOnInit(): void {
+    AuthActions.getCurrentUser();
+  }
+}
