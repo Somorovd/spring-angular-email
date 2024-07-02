@@ -3,7 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 
 import { Store } from '@ngrx/store';
 
-import { from, map, take } from 'rxjs';
+import { filter, first, map } from 'rxjs';
 
 import { selectCurrentUser } from '../store/reducers';
 import { PersistanceService } from '../../shared/services/persistance.service';
@@ -18,7 +18,8 @@ export const authGuard: CanActivateFn = (route, state) => {
   }
 
   return currentUser$.pipe(
-    take(1),
+    filter((value) => value !== undefined),
+    first(),
     map((currentUser) => {
       return currentUser ? true : router.createUrlTree(['/login']);
     })

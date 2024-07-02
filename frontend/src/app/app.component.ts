@@ -3,7 +3,6 @@ import { RouterOutlet } from '@angular/router';
 
 import { Store } from '@ngrx/store';
 
-import { AuthService } from './auth/services/auth.service';
 import { AuthActions } from './auth/store/actions';
 
 @Component({
@@ -13,9 +12,9 @@ import { AuthActions } from './auth/store/actions';
   imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {
-  constructor(private store: Store, private authService: AuthService) {}
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
-    AuthActions.getCurrentUser();
+    this.store.dispatch(AuthActions.getCurrentUser());
   }
 }
