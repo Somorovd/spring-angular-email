@@ -1,7 +1,7 @@
-import { StatusListResponseInterface } from './statusListResponse.interface';
+import { InboxStateInterface } from './inboxState.interface';
 
 export interface MailStateInterface {
-  inbox: StatusListResponseInterface;
+  inbox: InboxStateInterface;
   isLoading: boolean;
   error: string | null;
 }

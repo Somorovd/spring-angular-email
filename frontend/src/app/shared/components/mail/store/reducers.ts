@@ -6,7 +6,7 @@ import { MailActions } from './actions';
 
 const initialState: MailStateInterface = {
   inbox: {
-    statuses: [],
+    statuses: {},
     count: 0,
   },
   isLoading: false,

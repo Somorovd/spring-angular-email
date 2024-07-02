@@ -3,11 +3,12 @@
     <col class="starred-icon w-[24px]" />
     <col class="sender-name w-[200px]" />
     <col class="subject-body" />
-    <col class="date-sent w-[100px]" />
+    <col class="date-sent" />
   </colgroup>
   <tbody>
     <tr
-      *ngFor="let status of emails"
+      *ngFor="let status of statusList"
+      class="py-2 border-b-1 border-slate-300 cursor-pointer hover:bg-slate-100 hover:shadow-md hover:border-slate-400"
       [ngClass]="{ 'bg-slate-200': status.isRead }"
     >
       <td class="flex-cc" (click)="toggleStarred(status)">
@@ -19,8 +20,13 @@
         <span class="font-bold">{{ status.email.subject }} </span>
         <span>{{ status.email.body }}</span>
       </td>
-      <td>
-        {{ status.email.date }}
+      <td
+        [noWrap]="true"
+        class="max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis"
+      >
+        <p class="text-right">
+          {{ getFormattedDate(status.email.date) }}
+        </p>
       </td>
     </tr>
   </tbody>

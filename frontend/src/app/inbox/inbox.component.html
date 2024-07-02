@@ -3,6 +3,6 @@
   <div *ngIf="data.isLoading">Loading...</div>
   <div *ngIf="data.inbox">
     <p>You have {{ data.inbox.count }} emails</p>
-    <app-email-table [emails]="data.inbox.statuses"></app-email-table>
+    <app-email-table [statuses]="data.inbox.statuses"></app-email-table>
   </div>
 </ng-container>
