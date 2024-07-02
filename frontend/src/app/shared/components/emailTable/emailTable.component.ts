@@ -1,5 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
@@ -22,7 +23,7 @@ export class EmailTableComponent implements OnChanges {
   faStarSolid = faStarSolid;
   faStarRegular = faStarRegular;
 
-  constructor(private datePipe: DatePipe) {}
+  constructor(private datePipe: DatePipe, private router: Router) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['statuses'] && changes['statuses'].currentValue) {
@@ -44,5 +45,9 @@ export class EmailTableComponent implements OnChanges {
       return this.datePipe.transform(date, 'MMM d') as string;
     }
     return this.datePipe.transform(date, 'M/d/yyyy') as string;
+  }
+
+  goToDetails(status: Status) {
+    this.router.navigate(['/mail/inbox', status.id]);
   }
 }

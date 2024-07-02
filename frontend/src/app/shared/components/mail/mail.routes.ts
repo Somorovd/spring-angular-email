@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 
+import { EmailDetailComponent } from '../../../emailDetail/emailDetail.component';
 import { InboxComponent } from '../../../inbox/inbox.component';
 
 import { MailComponent } from './mail.component';
@@ -13,6 +14,9 @@ export const mailRoutes: Route[] = [
   {
     path: '',
     component: MailComponent,
-    children: [{ path: 'inbox', component: InboxComponent }],
+    children: [
+      { path: 'inbox', component: InboxComponent },
+      { path: 'inbox/:id', component: EmailDetailComponent },
+    ],
   },
 ];

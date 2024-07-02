@@ -10,6 +10,7 @@
       *ngFor="let status of statusList"
       class="py-2 border-b-1 border-slate-300 cursor-pointer hover:bg-slate-100 hover:shadow-md hover:border-slate-400"
       [ngClass]="{ 'bg-slate-200': status.isRead }"
+      (click)="goToDetails(status)"
     >
       <td class="flex-cc" (click)="toggleStarred(status)">
         <fa-icon *ngIf="status.isStarred" [icon]="faStarSolid"></fa-icon>
