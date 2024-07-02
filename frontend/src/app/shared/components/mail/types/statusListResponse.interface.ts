@@ -1,4 +1,4 @@
-import { Status } from '../../shared/types/status.interface';
+import { Status } from '../../../types/status.interface';
 
 export interface StatusListResponseInterface {
   statuses: Status[];
