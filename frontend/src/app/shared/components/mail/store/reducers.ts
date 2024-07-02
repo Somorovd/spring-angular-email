@@ -1,6 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 
-import { MailStateInterface } from '../types/mailState.interface';
+import { MailStateInterface } from '../../../../mail/types/mailState.interface';
 
 import { MailActions } from './actions';
 

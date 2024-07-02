@@ -5,18 +5,28 @@ import { Store } from '@ngrx/store';
 
 import { combineLatest } from 'rxjs';
 
-import { MailActions } from '../../store/actions';
+import { BannerComponent } from '../../../shared/components/banner/banner.component';
+import { EmailContentContainerComponent } from '../../../shared/components/emailContentContainer/emailContentContainer.component';
+import { EmailTableComponent } from '../../../shared/components/emailTable/emailTable.component';
+import { NavSidebarComponent } from '../../../shared/components/navSidebar/navSidebar.component';
+import { MailActions } from '../../../shared/components/mail/store/actions';
 import {
   selectError,
   selectInbox,
   selectIsLoading,
-} from '../../store/reducers';
+} from '../../../shared/components/mail/store/reducers';
 
 @Component({
   selector: 'app-inbox',
   templateUrl: './inbox.component.html',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    EmailTableComponent,
+    BannerComponent,
+    NavSidebarComponent,
+    EmailContentContainerComponent,
+  ],
 })
 export class InboxComponent implements OnInit {
   data$ = combineLatest({

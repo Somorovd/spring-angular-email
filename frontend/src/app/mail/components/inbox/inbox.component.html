@@ -1,10 +1,16 @@
-<div>INBOX</div>
 <ng-container *ngIf="data$ | async as data">
-  <div *ngIf="data.isLoading">Loading...</div>
-  <div *ngIf="data.inbox">
-    <p>You have {{ data.inbox.count }} emails</p>
-    <p *ngFor="let status of data.inbox.statuses">
-      {{ status.email.subject }} from {{ status.email.sender.username }}
-    </p>
+  <div class="flex flex-col h-full">
+    <app-banner></app-banner>
+    <div class="flex grow">
+      <app-nav-sidebar></app-nav-sidebar>
+      <div class="grow">
+        <app-email-content-container></app-email-content-container>
+        <div *ngIf="data.isLoading">Loading...</div>
+        <div *ngIf="data.inbox">
+          <p>You have {{ data.inbox.count }} emails</p>
+          <app-email-table [emails]="data.inbox.statuses"></app-email-table>
+        </div>
+      </div>
+    </div>
   </div>
 </ng-container>

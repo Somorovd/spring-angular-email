@@ -13,8 +13,11 @@ import { appRoutes } from './app.routes';
 
 import { AuthEffects } from './auth/store/effects';
 import { authFeatureKey, authReducer } from './auth/store/reducers';
-import { MailEffects } from './mail/store/effects';
-import { mailFeatureKey, mailReducer } from './mail/store/reducers';
+import { MailEffects } from './shared/components/mail/store/effects';
+import {
+  mailFeatureKey,
+  mailReducer,
+} from './shared/components/mail/store/reducers';
 
 export const appConfig: ApplicationConfig = {
   providers: [

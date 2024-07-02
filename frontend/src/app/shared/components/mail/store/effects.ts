@@ -5,7 +5,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap } from 'rxjs';
 
 import { MailService } from '../services/mail.service';
-import { StatusListResponseInterface } from '../types/statusListResponse.interface';
+import { StatusListResponseInterface } from '../../../../mail/types/statusListResponse.interface';
 
 import { MailActions } from './actions';
 

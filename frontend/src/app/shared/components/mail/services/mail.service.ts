@@ -3,10 +3,9 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { StatusListResponseInterface } from '../types/statusListResponse.interface';
-import { environment } from '../../../environments/environment';
-import { AuthService } from '../../auth/services/auth.service';
-import { PersistanceService } from '../../shared/services/persistance.service';
+import { StatusListResponseInterface } from '../../../../mail/types/statusListResponse.interface';
+import { environment } from '../../../../../environments/environment';
+import { PersistanceService } from '../../../services/persistance.service';
 
 @Injectable({ providedIn: 'root' })
 export class MailService {

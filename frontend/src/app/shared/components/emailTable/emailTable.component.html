@@ -1,0 +1,27 @@
+<table class="border-1 border-black w-full">
+  <colgroup>
+    <col class="starred-icon w-[24px]" />
+    <col class="sender-name w-[200px]" />
+    <col class="subject-body" />
+    <col class="date-sent w-[100px]" />
+  </colgroup>
+  <tbody>
+    <tr
+      *ngFor="let status of emails"
+      [ngClass]="{ 'bg-slate-200': status.isRead }"
+    >
+      <td class="flex-cc" (click)="toggleStarred(status)">
+        <fa-icon *ngIf="status.isStarred" [icon]="faStarSolid"></fa-icon>
+        <fa-icon *ngIf="!status.isStarred" [icon]="faStarRegular"></fa-icon>
+      </td>
+      <td>{{ status.email.sender.username }}</td>
+      <td class="flex flex-row gap-4">
+        <span class="font-bold">{{ status.email.subject }} </span>
+        <span>{{ status.email.body }}</span>
+      </td>
+      <td>
+        {{ status.email.date }}
+      </td>
+    </tr>
+  </tbody>
+</table>
