@@ -13,6 +13,8 @@ import { appRoutes } from './app.routes';
 
 import { AuthEffects } from './auth/store/effects';
 import { authFeatureKey, authReducer } from './auth/store/reducers';
+import { MailEffects } from './mail/store/effects';
+import { mailFeatureKey, mailReducer } from './mail/store/reducers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,7 +26,8 @@ export const appConfig: ApplicationConfig = {
     }),
     provideRouterStore(),
     provideState(authFeatureKey, authReducer),
-    provideEffects([AuthEffects]),
+    provideState(mailFeatureKey, mailReducer),
+    provideEffects([AuthEffects, MailEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: environment.production,

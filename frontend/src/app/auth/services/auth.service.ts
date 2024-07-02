@@ -12,18 +12,17 @@ import { UserInterface } from '../../shared/types/user.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  isAuthenticated$ = this.store
-    .select(selectCurrentUser)
-    .pipe(map((user) => !!user));
+  userId: number | null = null;
 
-  constructor(private http: HttpClient, private store: Store) {}
+  constructor(private http: HttpClient, private store: Store) {
+    this.store.select(selectCurrentUser).subscribe((user) => {
+      if (!user) return;
+      this.userId = user.id;
+    });
+  }
 
   login(data: LoginRequestInterface): Observable<UserInterface> {
     const url = environment.apiUrl + '/auth/login';
     return this.http.post<UserInterface>(url, data);
-  }
-
-  isAuthenticated(): Observable<boolean> {
-    return this.isAuthenticated$;
   }
 }

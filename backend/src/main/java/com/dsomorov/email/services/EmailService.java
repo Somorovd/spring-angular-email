@@ -5,10 +5,7 @@ import com.dsomorov.email.mappers.AddressMapper;
 import com.dsomorov.email.mappers.EmailMapper;
 import com.dsomorov.email.mappers.RecipientMapper;
 import com.dsomorov.email.mappers.StatusMapper;
-import com.dsomorov.email.models.dtos.EmailDto;
-import com.dsomorov.email.models.dtos.RecipientDto;
-import com.dsomorov.email.models.dtos.StatusDto;
-import com.dsomorov.email.models.dtos.UpdateEmailDto;
+import com.dsomorov.email.models.dtos.*;
 import com.dsomorov.email.models.entities.*;
 import com.dsomorov.email.repositories.*;
 import com.dsomorov.email.validation.RuntimeValidationException;
@@ -176,13 +173,19 @@ public class EmailService
   }
   
   @Transactional
-  public List<StatusDto> findUserInbox(Long userId)
+  public StatusListResponseDto findUserInbox(Long userId)
   {
-    return statusRepository
+    List<StatusDto> foundStatuses = statusRepository
       .findUserInbox(userId)
       .stream()
       .map(statusMapper::mapTo)
       .toList();
+    
+    return StatusListResponseDto
+      .builder()
+      .statuses(foundStatuses)
+      .count(foundStatuses.size())
+      .build();
   }
   
   private List<Recipient> _saveEmailRecipients(List<RecipientDto> recipientDtos, Email email)
