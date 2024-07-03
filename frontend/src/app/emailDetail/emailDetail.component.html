@@ -1,4 +1,17 @@
-<app-back-button></app-back-button>
-<div>
-  
-</div>
+<ng-container *ngIf="data$ | async as data">
+  <app-back-button></app-back-button>
+  <div class="ml-[50px]">
+    <header class="text-3xl">{{ data.status?.email?.subject }}</header>
+    <div class="flex flex-col [&>div]:py-2 [&>div:not(:last-of-type)]:border-b">
+      <div *ngFor="let email of data.emails">
+        <div class="flex justify-between">
+          <p class="font-bold">
+            {{ email.sender.username }}&commat;{{ email.sender.server }}
+          </p>
+          <p class="text-sm">{{ getFormattedDate(email.date) }}</p>
+        </div>
+        <p>{{ email.body }}</p>
+      </div>
+    </div>
+  </div>
+</ng-container>

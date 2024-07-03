@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { Store } from '@ngrx/store';
 
@@ -12,13 +13,13 @@ import {
   selectDetailsEmails,
   selectDetailsStatus,
 } from '../shared/components/mail/store/reducers';
-import { EmailDetailStateInterface } from '../shared/components/mail/types/emailDetailsState.interface';
 
 @Component({
   selector: 'app-emailDetail',
   templateUrl: './emailDetail.component.html',
   standalone: true,
-  imports: [BackButtonComponent],
+  imports: [CommonModule, BackButtonComponent],
+  providers: [DatePipe],
 })
 export class EmailDetailComponent implements OnInit {
   statusId$ = this.route.paramMap.pipe(map((params) => params.get('statusId')));
@@ -31,7 +32,8 @@ export class EmailDetailComponent implements OnInit {
   constructor(
     private store: Store,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
@@ -49,5 +51,9 @@ export class EmailDetailComponent implements OnInit {
         this.store.dispatch(MailActions.getChain({ chainId: status?.chainId }));
       }
     });
+  }
+
+  getFormattedDate(date: Date): string {
+    return this.datePipe.transform(date, 'EEE, MMM d, y h:mm a') as string;
   }
 }
