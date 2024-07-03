@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { InboxStateInterface } from '../types/inboxState.interface';
+import { StatusUpdateRequestInterface } from '../types/statusUpdateRequest.interface';
 import { PersistanceService } from '../../../services/persistance.service';
 import { Email } from '../../../types/email.interface';
 import { Status } from '../../../types/status.interface';
@@ -32,5 +33,13 @@ export class MailService {
     const url =
       environment.apiUrl + `/emails/user/${this.userId}/chain/${chainId}`;
     return this.http.get<Email[]>(url);
+  }
+
+  updateStatus(
+    statusId: number,
+    statusUpdate: StatusUpdateRequestInterface
+  ): Observable<Status> {
+    const url = environment.apiUrl + `/statuses/${statusId}`;
+    return this.http.put<Status>(url, statusUpdate);
   }
 }

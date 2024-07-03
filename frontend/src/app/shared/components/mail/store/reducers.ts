@@ -81,6 +81,25 @@ const mailFeature = createFeature({
       isLoading: false,
     })),
     // ------------------------------------------------
+    on(MailActions.updateStatus, (state) => ({
+      ...state,
+    })),
+    on(MailActions.updateStatusSuccess, (state, action) => ({
+      ...state,
+      inbox: {
+        ...state.inbox,
+        statuses: state.inbox.statuses.map((status) => {
+          if (status.id === action.status.id) {
+            return action.status;
+          }
+          return status;
+        }),
+      },
+    })),
+    on(MailActions.updateStatusFailed, (state, action) => ({
+      ...state,
+    })),
+    // ------------------------------------------------
     on(routerNavigatedAction, (state) => ({
       ...state,
       details: initialDetailsState,

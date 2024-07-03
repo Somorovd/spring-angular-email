@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 
-import { catchError, map, of, switchMap } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
 
 import { MailService } from '../services/mail.service';
 import { InboxStateInterface } from '../types/inboxState.interface';
@@ -41,6 +41,21 @@ export class MailEffects {
             return MailActions.getStatusSuccess({ status });
           }),
           catchError(() => of(MailActions.getStatusFailed()))
+        );
+      })
+    );
+  });
+
+  updateStatus$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(MailActions.updateStatus),
+      mergeMap(({ statusId, statusUpdate }) => {
+        return this.mailService.updateStatus(statusId, statusUpdate).pipe(
+          map((status: Status) => {
+            status.email.date = new Date(status.email.date);
+            return MailActions.updateStatusSuccess({ status });
+          }),
+          catchError(() => of(MailActions.updateStatusFailed()))
         );
       })
     );

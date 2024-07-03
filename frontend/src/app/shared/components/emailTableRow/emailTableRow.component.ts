@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { EMPTY, Observable } from 'rxjs';
 
 import { Status } from '../../types/status.interface';
+import { MailActions } from '../mail/store/actions';
 import { selectInboxStatusByIndex } from '../mail/store/reducers';
 
 @Component({
@@ -25,6 +26,8 @@ export class EmailTableRowComponent implements OnInit {
 
   status$: Observable<Status | null> = EMPTY;
 
+  isStarred = false;
+
   faStarSolid = faStarSolid;
   faStarRegular = faStarRegular;
 
@@ -38,10 +41,22 @@ export class EmailTableRowComponent implements OnInit {
     this.status$ = this.store.select(
       selectInboxStatusByIndex(this.statusIndex)
     );
+    this.status$.subscribe((status) => {
+      if (status) {
+        this.isStarred = status.isStarred;
+      }
+    });
   }
 
-  toggleStarred(status: Status) {
-    status.isStarred = !status.isStarred;
+  toggleStarred(event: Event, status: Status) {
+    event.stopPropagation();
+    this.isStarred = !this.isStarred;
+    this.store.dispatch(
+      MailActions.updateStatus({
+        statusId: status.id,
+        statusUpdate: { isStarred: !status.isStarred },
+      })
+    );
   }
 
   getFormattedDate(date: Date): string {

@@ -49,6 +49,12 @@ export class EmailDetailComponent implements OnInit {
       }
       if (status) {
         this.store.dispatch(MailActions.getChain({ chainId: status?.chainId }));
+        this.store.dispatch(
+          MailActions.updateStatus({
+            statusId: status?.id,
+            statusUpdate: { isRead: true },
+          })
+        );
       }
     });
   }

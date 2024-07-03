@@ -4,9 +4,12 @@
     [ngClass]="{ 'bg-slate-200': status.isRead }"
     (click)="goToDetails(status)"
   >
-    <div class="starred-icon w-[24px] flex-cc" (click)="toggleStarred(status)">
-      <fa-icon *ngIf="status.isStarred" [icon]="faStarSolid"></fa-icon>
-      <fa-icon *ngIf="!status.isStarred" [icon]="faStarRegular"></fa-icon>
+    <div
+      class="starred-icon w-[24px] flex-cc"
+      (click)="toggleStarred($event, status)"
+    >
+      <fa-icon *ngIf="isStarred" [icon]="faStarSolid"></fa-icon>
+      <fa-icon *ngIf="!isStarred" [icon]="faStarRegular"></fa-icon>
     </div>
     <div class="sender-name w-[200px]">{{ status.email.sender.username }}</div>
     <div class="subject-body grow flex flex-row gap-4">

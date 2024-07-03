@@ -1,6 +1,7 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 
 import { InboxStateInterface } from '../types/inboxState.interface';
+import { StatusUpdateRequestInterface } from '../types/statusUpdateRequest.interface';
 import { Email } from '../../../types/email.interface';
 import { Status } from '../../../types/status.interface';
 
@@ -19,6 +20,13 @@ export const MailActions = createActionGroup({
     'Get Chain': props<{ chainId: number }>(),
     'Get Chain Success': props<{ emails: Email[] }>(),
     'Get Chain Failed': emptyProps(),
+    // ------------------------------------------------
+    'Update Status': props<{
+      statusId: number;
+      statusUpdate: StatusUpdateRequestInterface;
+    }>(),
+    'Update Status Success': props<{ status: Status }>(),
+    'Update Status Failed': emptyProps(),
     // ------------------------------------------------
   },
 });
