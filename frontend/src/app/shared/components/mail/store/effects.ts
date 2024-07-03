@@ -7,6 +7,7 @@ import { catchError, map, of, switchMap } from 'rxjs';
 import { MailService } from '../services/mail.service';
 import { InboxStateInterface } from '../types/inboxState.interface';
 import { StatusListResponseInterface } from '../types/statusListResponse.interface';
+import { Email } from '../../../types/email.interface';
 import { Status } from '../../../types/status.interface';
 
 import { MailActions } from './actions';
@@ -39,6 +40,20 @@ export class MailEffects {
             return MailActions.getStatusSuccess({ status });
           }),
           catchError(() => of(MailActions.getStatusFailed()))
+        );
+      })
+    );
+  });
+
+  getChain$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(MailActions.getChain),
+      switchMap(({ chainId }) => {
+        return this.mailService.getChain(chainId).pipe(
+          map((emails: Email[]) => {
+            return MailActions.getChainSuccess({ emails });
+          }),
+          catchError(() => of(MailActions.getChainFailed()))
         );
       })
     );

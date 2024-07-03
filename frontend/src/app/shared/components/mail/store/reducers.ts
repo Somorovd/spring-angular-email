@@ -1,18 +1,22 @@
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
+import { routerNavigatedAction } from '@ngrx/router-store';
 
+import { EmailDetailStateInterface } from '../types/emailDetailsState.interface';
 import { MailStateInterface } from '../types/mailState.interface';
 
 import { MailActions } from './actions';
+
+const initialDetailsState: EmailDetailStateInterface = {
+  status: undefined,
+  emails: [],
+};
 
 const initialState: MailStateInterface = {
   inbox: {
     statuses: {},
     count: 0,
   },
-  details: {
-    status: null,
-    emails: [],
-  },
+  details: initialDetailsState,
   isLoading: false,
   error: null,
 };
@@ -52,9 +56,35 @@ const mailFeature = createFeature({
     })),
     on(MailActions.getStatusFailed, (state, action) => ({
       ...state,
+      details: {
+        ...state.details,
+        status: null,
+      },
       isLoading: false,
-    }))
+    })),
     // ------------------------------------------------
+    on(MailActions.getChain, (state) => ({
+      ...state,
+      isLoading: true,
+      error: null,
+    })),
+    on(MailActions.getChainSuccess, (state, action) => ({
+      ...state,
+      details: {
+        ...state.details,
+        emails: action.emails,
+      },
+      isLoading: false,
+    })),
+    on(MailActions.getChainFailed, (state, action) => ({
+      ...state,
+      isLoading: false,
+    })),
+    // ------------------------------------------------
+    on(routerNavigatedAction, (state) => ({
+      ...state,
+      details: initialDetailsState,
+    }))
   ),
 });
 

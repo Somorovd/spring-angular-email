@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 
 import { StatusListResponseInterface } from '../types/statusListResponse.interface';
 import { PersistanceService } from '../../../services/persistance.service';
+import { Email } from '../../../types/email.interface';
 import { Status } from '../../../types/status.interface';
 import { environment } from '../../../../../environments/environment';
 
@@ -25,5 +26,11 @@ export class MailService {
   getStatus(statusId: number): Observable<Status> {
     const url = environment.apiUrl + `/statuses/${statusId}`;
     return this.http.get<Status>(url);
+  }
+
+  getChain(chainId: number): Observable<Email[]> {
+    const url =
+      environment.apiUrl + `/emails/user/${this.userId}/chain/${chainId}`;
+    return this.http.get<Email[]>(url);
   }
 }
