@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { StatusListResponseInterface } from '../types/statusListResponse.interface';
+import { InboxStateInterface } from '../types/inboxState.interface';
 import { PersistanceService } from '../../../services/persistance.service';
 import { Email } from '../../../types/email.interface';
 import { Status } from '../../../types/status.interface';
@@ -18,9 +18,9 @@ export class MailService {
     private persistanceService: PersistanceService
   ) {}
 
-  getInbox(): Observable<StatusListResponseInterface> {
+  getInbox(): Observable<InboxStateInterface> {
     const url = environment.apiUrl + `/emails/user/${this.userId}/inbox`;
-    return this.http.get<StatusListResponseInterface>(url);
+    return this.http.get<InboxStateInterface>(url);
   }
 
   getStatus(statusId: number): Observable<Status> {

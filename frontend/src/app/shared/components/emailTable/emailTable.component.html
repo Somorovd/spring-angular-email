@@ -1,34 +1,5 @@
-<table class="border-1 border-black w-full">
-  <colgroup>
-    <col class="starred-icon w-[24px]" />
-    <col class="sender-name w-[200px]" />
-    <col class="subject-body" />
-    <col class="date-sent" />
-  </colgroup>
-  <tbody>
-    <tr
-      *ngFor="let status of statusList"
-      class="py-2 border-b-1 border-slate-300 cursor-pointer hover:bg-slate-100 hover:shadow-md hover:border-slate-400"
-      [ngClass]="{ 'bg-slate-200': status.isRead }"
-      (click)="goToDetails(status)"
-    >
-      <td class="flex-cc" (click)="toggleStarred(status)">
-        <fa-icon *ngIf="status.isStarred" [icon]="faStarSolid"></fa-icon>
-        <fa-icon *ngIf="!status.isStarred" [icon]="faStarRegular"></fa-icon>
-      </td>
-      <td>{{ status.email.sender.username }}</td>
-      <td class="flex flex-row gap-4">
-        <span class="font-bold">{{ status.email.subject }} </span>
-        <span>{{ status.email.body }}</span>
-      </td>
-      <td
-        [noWrap]="true"
-        class="max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis"
-      >
-        <p class="text-right">
-          {{ getFormattedDate(status.email.date) }}
-        </p>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="border-1 border-black w-full">
+  <ng-container *ngFor="let i of count$ | async">
+    <app-email-table-row [statusIndex]="i"></app-email-table-row>
+  </ng-container>
+</div>

@@ -1,53 +1,23 @@
-import { CommonModule, DatePipe } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
-import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
+import { Store } from '@ngrx/store';
 
-import { Status } from '../../types/status.interface';
+import { map } from 'rxjs';
+
+import { EmailTableRowComponent } from '../emailTableRow/emailTableRow.component';
+import { selectInboxCount } from '../mail/store/reducers';
 
 @Component({
   selector: 'app-email-table',
   templateUrl: './emailTable.component.html',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule],
-  providers: [DatePipe],
+  imports: [CommonModule, EmailTableRowComponent],
 })
-export class EmailTableComponent implements OnChanges {
-  @Input() statuses: { [key: number]: Status } = {};
+export class EmailTableComponent {
+  count$ = this.store
+    .select(selectInboxCount)
+    .pipe(map((count) => Array.from({ length: count }, (_, i) => i)));
 
-  statusList: Status[] = [];
-
-  faStarSolid = faStarSolid;
-  faStarRegular = faStarRegular;
-
-  constructor(private datePipe: DatePipe, private router: Router) {}
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['statuses'] && changes['statuses'].currentValue) {
-      this.statusList = Object.values(this.statuses).sort((a, b) => {
-        return b.email.date.getTime() - a.email.date.getTime();
-      });
-    }
-  }
-
-  toggleStarred(status: Status) {
-    status.isStarred = !status.isStarred;
-  }
-
-  getFormattedDate(date: Date): string {
-    if (date.getDay() === new Date().getDay()) {
-      return this.datePipe.transform(date, 'h:mm a') as string;
-    }
-    if (date.getFullYear() === new Date().getFullYear()) {
-      return this.datePipe.transform(date, 'MMM d') as string;
-    }
-    return this.datePipe.transform(date, 'M/d/yyyy') as string;
-  }
-
-  goToDetails(status: Status) {
-    this.router.navigate(['/mail/inbox', status.id]);
-  }
+  constructor(private store: Store) {}
 }

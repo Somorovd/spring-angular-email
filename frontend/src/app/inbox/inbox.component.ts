@@ -26,6 +26,8 @@ export class InboxComponent implements OnInit {
     error: this.store.select(selectError),
   });
 
+  selectInbox = selectInbox;
+
   constructor(private store: Store) {}
 
   ngOnInit(): void {

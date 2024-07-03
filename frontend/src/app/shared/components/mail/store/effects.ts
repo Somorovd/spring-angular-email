@@ -6,7 +6,6 @@ import { catchError, map, of, switchMap } from 'rxjs';
 
 import { MailService } from '../services/mail.service';
 import { InboxStateInterface } from '../types/inboxState.interface';
-import { StatusListResponseInterface } from '../types/statusListResponse.interface';
 import { Email } from '../../../types/email.interface';
 import { Status } from '../../../types/status.interface';
 
@@ -21,9 +20,11 @@ export class MailEffects {
       ofType(MailActions.getInbox),
       switchMap(() => {
         return this.mailService.getInbox().pipe(
-          map((res: StatusListResponseInterface) => {
-            const inbox = this._statusResToInboxState(res);
-            return MailActions.getInboxSuccess({ inbox: inbox });
+          map((inbox: InboxStateInterface) => {
+            for (let status of inbox.statuses) {
+              status.email.date = new Date(status.email.date);
+            }
+            return MailActions.getInboxSuccess({ inbox });
           }),
           catchError(() => of(MailActions.getInboxFailed()))
         );
@@ -58,18 +59,4 @@ export class MailEffects {
       })
     );
   });
-
-  _statusResToInboxState(
-    res: StatusListResponseInterface
-  ): InboxStateInterface {
-    const inboxState: InboxStateInterface = {
-      statuses: {},
-      count: res.count,
-    };
-    res.statuses.forEach((status) => {
-      inboxState.statuses[status.id] = status;
-      status.email.date = new Date(status.email.date);
-    });
-    return inboxState;
-  }
 }

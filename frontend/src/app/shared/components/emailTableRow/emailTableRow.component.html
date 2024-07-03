@@ -1,0 +1,24 @@
+<ng-container *ngIf="status$ | async as status">
+  <div
+    class="flex py-2 border-b-1 border-slate-300 cursor-pointer hover:bg-slate-100 hover:shadow-md hover:border-slate-400"
+    [ngClass]="{ 'bg-slate-200': status.isRead }"
+    (click)="goToDetails(status)"
+  >
+    <div class="starred-icon w-[24px] flex-cc" (click)="toggleStarred(status)">
+      <fa-icon *ngIf="status.isStarred" [icon]="faStarSolid"></fa-icon>
+      <fa-icon *ngIf="!status.isStarred" [icon]="faStarRegular"></fa-icon>
+    </div>
+    <div class="sender-name w-[200px]">{{ status.email.sender.username }}</div>
+    <div class="subject-body grow flex flex-row gap-4">
+      <span class="font-bold">{{ status.email.subject }} </span>
+      <span>{{ status.email.body }}</span>
+    </div>
+    <div
+      class="date-sent max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis"
+    >
+      <p class="text-right">
+        {{ getFormattedDate(status.email.date) }}
+      </p>
+    </div>
+  </div>
+</ng-container>

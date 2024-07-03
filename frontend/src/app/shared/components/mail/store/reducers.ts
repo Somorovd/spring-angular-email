@@ -13,7 +13,7 @@ const initialDetailsState: EmailDetailStateInterface = {
 
 const initialState: MailStateInterface = {
   inbox: {
-    statuses: {},
+    statuses: [],
     count: 0,
   },
   details: initialDetailsState,
@@ -96,6 +96,14 @@ export const {
   selectIsLoading,
   selectError,
 } = mailFeature;
+
+export const selectInboxCount = createSelector(
+  selectInbox,
+  (inbox) => inbox.count
+);
+
+export const selectInboxStatusByIndex = (index: number) =>
+  createSelector(selectInbox, (inbox) => inbox.statuses[index]);
 
 export const selectDetailsStatus = createSelector(
   selectDetails,
