@@ -1,6 +1,7 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 
 import { InboxStateInterface } from '../types/inboxState.interface';
+import { Status } from '../../../types/status.interface';
 
 export const MailActions = createActionGroup({
   source: 'Mail',
@@ -9,6 +10,10 @@ export const MailActions = createActionGroup({
     'Get Inbox': emptyProps(),
     'Get Inbox Success': props<{ inbox: InboxStateInterface }>(),
     'Get Inbox Failed': emptyProps(),
+    // ------------------------------------------------
+    'Get Status': props<{ statusId: number }>(),
+    'Get Status Success': props<{ status: Status }>(),
+    'Get Status Failed': emptyProps(),
     // ------------------------------------------------
   },
 });

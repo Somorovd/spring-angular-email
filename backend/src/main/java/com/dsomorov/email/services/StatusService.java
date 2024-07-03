@@ -17,6 +17,12 @@ public class StatusService
   private StatusRepository statusRepository;
   @Autowired
   private StatusMapper     statusMapper;
+
+  public Optional<StatusDto> findStatusById(Long id)
+  {
+    Optional<Status> foundStatus = statusRepository.findById(id);
+    return foundStatus.map(statusMapper::mapTo);
+  }
   
   public StatusDto updateStatus(Long id, StatusDto updateDto)
   {

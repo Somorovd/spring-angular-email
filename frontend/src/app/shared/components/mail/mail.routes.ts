@@ -16,7 +16,7 @@ export const mailRoutes: Route[] = [
     component: MailComponent,
     children: [
       { path: 'inbox', component: InboxComponent },
-      { path: 'inbox/:id', component: EmailDetailComponent },
+      { path: 'inbox/:statusId', component: EmailDetailComponent },
     ],
   },
 ];
