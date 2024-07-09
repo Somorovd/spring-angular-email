@@ -2,8 +2,8 @@ import { createActionGroup, emptyProps, props } from '@ngrx/store';
 
 import { InboxStateInterface } from '../types/inboxState.interface';
 import { StatusUpdateRequestInterface } from '../types/statusUpdateRequest.interface';
-import { Email } from '../../../types/email.interface';
-import { Status } from '../../../types/status.interface';
+import { Email } from '../../shared/types/email.interface';
+import { Status } from '../../shared/types/status.interface';
 
 export const MailActions = createActionGroup({
   source: 'Mail',

@@ -5,10 +5,10 @@ import { Observable } from 'rxjs';
 
 import { InboxStateInterface } from '../types/inboxState.interface';
 import { StatusUpdateRequestInterface } from '../types/statusUpdateRequest.interface';
-import { PersistanceService } from '../../../services/persistance.service';
-import { Email } from '../../../types/email.interface';
-import { Status } from '../../../types/status.interface';
-import { environment } from '../../../../../environments/environment';
+import { environment } from '../../../environments/environment';
+import { PersistanceService } from '../../shared/services/persistance.service';
+import { Email } from '../../shared/types/email.interface';
+import { Status } from '../../shared/types/status.interface';
 
 @Injectable({ providedIn: 'root' })
 export class MailService {

@@ -9,8 +9,7 @@ export const appRoutes: Routes = [
   },
   {
     path: 'mail',
-    loadChildren: () =>
-      import('./shared/components/mail/mail.routes').then((m) => m.mailRoutes),
+    loadChildren: () => import('./mail/mail.routes').then((m) => m.mailRoutes),
     // canActivate: [authGuard],
   },
 ];

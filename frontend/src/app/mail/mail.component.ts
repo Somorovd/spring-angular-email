@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { BannerComponent } from '../banner/banner.component';
-import { NavSidebarComponent } from '../navSidebar/navSidebar.component';
+import { BannerComponent } from '../shared/components/banner/banner.component';
+import { NavSidebarComponent } from '../shared/components/navSidebar/navSidebar.component';
 
 @Component({
   selector: 'app-mail',

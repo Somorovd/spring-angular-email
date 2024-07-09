@@ -6,8 +6,8 @@ import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
 
 import { MailService } from '../services/mail.service';
 import { InboxStateInterface } from '../types/inboxState.interface';
-import { Email } from '../../../types/email.interface';
-import { Status } from '../../../types/status.interface';
+import { Email } from '../../shared/types/email.interface';
+import { Status } from '../../shared/types/status.interface';
 
 import { MailActions } from './actions';
 

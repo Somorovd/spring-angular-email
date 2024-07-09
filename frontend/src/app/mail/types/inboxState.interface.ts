@@ -1,4 +1,4 @@
-import { Status } from '../../../types/status.interface';
+import { Status } from '../../shared/types/status.interface';
 
 export interface InboxStateInterface {
   statuses: Status[];

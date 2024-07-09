@@ -5,13 +5,13 @@ import { Store } from '@ngrx/store';
 
 import { combineLatest } from 'rxjs';
 
-import { EmailTableComponent } from '../shared/components/emailTable/emailTable.component';
-import { MailActions } from '../shared/components/mail/store/actions';
+import { MailActions } from '../../store/actions';
 import {
   selectError,
   selectInbox,
   selectIsLoading,
-} from '../shared/components/mail/store/reducers';
+} from '../../store/reducers';
+import { EmailTableComponent } from '../../../shared/components/emailTable/emailTable.component';
 
 @Component({
   selector: 'app-inbox',
@@ -25,8 +25,6 @@ export class InboxComponent implements OnInit {
     isLoading: this.store.select(selectIsLoading),
     error: this.store.select(selectError),
   });
-
-  selectInbox = selectInbox;
 
   constructor(private store: Store) {}
 

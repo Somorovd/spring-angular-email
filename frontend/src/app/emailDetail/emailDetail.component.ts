@@ -4,15 +4,14 @@ import { CommonModule, DatePipe } from '@angular/common';
 
 import { Store } from '@ngrx/store';
 
-import { combineLatest, filter, map, tap } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 
-import { BackButtonComponent } from '../shared/components/backButton/backButton.component';
-import { MailActions } from '../shared/components/mail/store/actions';
+import { MailActions } from '../mail/store/actions';
 import {
-  selectDetails,
   selectDetailsEmails,
   selectDetailsStatus,
-} from '../shared/components/mail/store/reducers';
+} from '../mail/store/reducers';
+import { BackButtonComponent } from '../shared/components/backButton/backButton.component';
 
 @Component({
   selector: 'app-emailDetail',

@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { map } from 'rxjs';
 
 import { EmailTableRowComponent } from '../emailTableRow/emailTableRow.component';
-import { selectInboxCount } from '../mail/store/reducers';
+import { selectInboxCount } from '../../../mail/store/reducers';
 
 @Component({
   selector: 'app-email-table',

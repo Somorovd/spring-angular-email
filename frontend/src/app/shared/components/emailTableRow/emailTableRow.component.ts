@@ -11,8 +11,8 @@ import { Store } from '@ngrx/store';
 import { EMPTY, Observable } from 'rxjs';
 
 import { Status } from '../../types/status.interface';
-import { MailActions } from '../mail/store/actions';
-import { selectInboxStatusByIndex } from '../mail/store/reducers';
+import { MailActions } from '../../../mail/store/actions';
+import { selectInboxStatusByIndex } from '../../../mail/store/reducers';
 
 @Component({
   selector: 'app-email-table-row',

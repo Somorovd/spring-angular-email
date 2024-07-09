@@ -1,1 +1,14 @@
-<div class="w-[250px] bg-slate-400 flex justify-center h-full">NAV SIDEBAR</div>
+<div class="w-[250px] h-full bg-slate-500 flex flex-col">
+  <div class="my-4">
+    <button class="p-4 ml-3 bg-[#f0f7f4] rounded-2xl hover:opacity-80">
+      Compose
+    </button>
+  </div>
+  <div class="w-full flex flex-col">
+    <app-nav-sidebar-link
+      *ngFor="let link of links"
+      [title]="link.title"
+      [link]="link.link"
+    ></app-nav-sidebar-link>
+  </div>
+</div>
